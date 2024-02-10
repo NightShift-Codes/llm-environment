@@ -11,5 +11,5 @@ poetry install
 ## Run
 
 ```bash
-poetry run jupyterlab
+./start.sh
 ```
