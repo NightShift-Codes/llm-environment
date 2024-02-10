@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "llm_environment"
+version = "1.0.0"
+description = "Base environment for experimenting locally with LLMs"
+authors = ["Matt Proetsch <matt@nightshift.codes>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+torch = "^2.2.0"
+jupyterlab = "^4.1.0"
+transformers = "^4.37.2"
+sentencepiece = "^0.1.99"
+pandas = "^2.2.0"
+langchain = "^0.1.6"
+Flask = "^3.0.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
