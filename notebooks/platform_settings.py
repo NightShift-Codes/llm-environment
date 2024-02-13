@@ -14,6 +14,7 @@ else:
 dtype = torch.bfloat16
 if device == "mps":
     try:
+        # bfloat16 requires M2 or higher
         has_bf16 = int(
             Popen(
                 ["/bin/sh", "-c", "sysctl hw | grep FEAT_BF16 | awk '{print $2}'"],
@@ -31,6 +32,17 @@ if device == "mps":
     except:
         print("No bfloat16 support on Intel - falling back to float16")
         dtype = torch.float16
+elif device == "cuda":
+    devname = torch.cuda.get_device_name()
+    devcaps = torch.cuda.get_device_capability()
+    # bfloat16 requires CUDA compute capability 8.0 or higher (Ampere)
+    if devcaps[0] < 8:
+        print(f"CUDA device {devname} has compute capability {devcaps[0]}.{devcaps[1]} < 8 - falling back to float16")
+        dtype = torch.float16
+    else:
+        print(f"Using bfloat16 on {devname}")
+else:
+    dtype = torch.float16
 
 print(f"Platform: {platform.platform()} ({sys.platform} on {platform.machine()})")
 if device == "cpu":
