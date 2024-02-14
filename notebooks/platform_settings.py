@@ -36,13 +36,15 @@ elif device == "cuda":
     devname = torch.cuda.get_device_name()
     devcaps = torch.cuda.get_device_capability()
     # bfloat16 requires CUDA compute capability 8.0 or higher (Ampere)
-    if devcaps[0] < 8:
-        print(f"CUDA device {devname} has compute capability {devcaps[0]}.{devcaps[1]} < 8 - falling back to float16")
+    has_bf16 = torch.cuda.is_bf16_supported()
+    if not has_bf16:
+        print(f"CUDA device {devname} has compute capability {devcaps[0]}.{devcaps[1]} (no bfloat16) - falling back to float16")
         dtype = torch.float16
     else:
-        print(f"Using bfloat16 on {devname}")
+        print(f"Using native bfloat16 on {devname}")
 else:
-    dtype = torch.float16
+    # on the cpu you can do anything
+    dtype = torch.bfloat16
 
 print(f"Platform: {platform.platform()} ({sys.platform} on {platform.machine()})")
 if device == "cpu":
