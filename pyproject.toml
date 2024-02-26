@@ -7,8 +7,8 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
-torch = "^2.2.0"
+python = "^3.11"
+torch = "^2.2.1"
 jupyterlab = "^4.1.0"
 transformers = "^4.37.2"
 sentencepiece = "^0.1.99"
@@ -17,6 +17,12 @@ langchain = "^0.1.6"
 Flask = "^3.0.2"
 ipywidgets = "^8.1.2"
 accelerate = "^0.27.2"
+exllamav2 = {url = "https://github.com/turboderp/exllamav2/releases/download/v0.0.14/exllamav2-0.0.14+cu121-cp311-cp311-linux_x86_64.whl"}
+fastapi = "^0.110.0"
+progress = "^1.6"
+uvicorn = "^0.27.1"
+colorlog = "^6.8.2"
+flash-attn = {url = "https://github.com/Dao-AILab/flash-attention/releases/download/v2.5.2/flash_attn-2.5.2+cu122torch2.2cxx11abiFALSE-cp311-cp311-linux_x86_64.whl"}
 
 
 [build-system]
