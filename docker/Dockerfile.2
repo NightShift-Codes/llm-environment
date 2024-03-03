@@ -22,6 +22,7 @@ WORKDIR /home/user/llm-environment
 
 COPY --chown=1000:1000 ./pyproject.toml ./pyproject.toml
 COPY --chown=1000:1000 ./hashpass.py ./hashpass.py
+COPY --chown=1000:1000 ./poetry.lock ./poetry.lock
 
 RUN sudo apt update \
     && sudo apt install -y software-properties-common \

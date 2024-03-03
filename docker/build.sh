@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-files=(start.sh pyproject.toml hashpass.py)
+files=(start.sh pyproject.toml hashpass.py poetry.lock)
 
 usage() {
     echo "usage: $0 DOCKERFILE"

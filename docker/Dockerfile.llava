@@ -1,0 +1,61 @@
+FROM nvcr.io/nvidia/cuda:12.2.2-cudnn8-runtime-ubuntu22.04
+
+USER root
+
+SHELL [ "/bin/bash", "-c" ]
+
+WORKDIR /root
+
+RUN apt update \
+    && apt upgrade -y \
+    && apt install -y sudo git \
+    && echo 'user ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers \
+    && useradd -m user \
+    && apt clean
+
+USER user
+ENV PATH="/home/user/.local/bin:$PATH"
+ENV SHELL="/bin/bash"
+ENV HOME=/home/user
+ENV DEBIAN_FRONTEND=noninteractive
+ENV RUNNING_IN_DOCKER=1
+WORKDIR /home/user
+
+RUN sudo apt update \
+    && sudo apt install -y software-properties-common \
+    && sudo add-apt-repository ppa:deadsnakes/ppa \
+    && sudo apt update \
+    && sudo --preserve-env=DEBIAN_FRONTEND apt install -y \
+         python3.10-dev \
+         python3-pip \
+         python3.10-venv \
+         pkg-config \
+         build-essential \
+         cmake \
+         wget \
+         curl \
+    && sudo apt autoremove -y \
+    && rm -rf /home/user/.cache \
+    && sudo apt clean
+
+ENV DEBIAN_FRONTEND=
+ENV PATH="/home/user/LLaVA/venv/bin:$PATH"
+
+RUN git clone https://github.com/haotian-liu/LLaVA \
+    && cd LLaVA \
+    && python3 -m venv venv \
+    && source venv/bin/activate \
+    && pip install --upgrade pip \
+    && pip install -e "." \
+    && git clone https://github.com/sgl-project/sglang _sglang \
+    && cd _sglang \
+    && pip install -e "python[all]" \
+    && pip install -U --index-url https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/Triton-Nightly/pypi/simple/ triton-nightly \
+    && pip install vllm==0.3.2 \
+    && rm -rf /home/user/.cache
+
+WORKDIR /home/user/LLaVA
+COPY --chown=1000:1000 llava-entrypoint.sh ./llava-entrypoint.sh
+RUN chmod +x ./llava-entrypoint.sh
+ENTRYPOINT [ "/bin/bash", "-c" ]
+CMD [ "./llava-entrypoint.sh" ]
