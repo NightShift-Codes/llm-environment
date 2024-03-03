@@ -8,7 +8,7 @@ WORKDIR /root
 
 RUN apt update \
     && apt upgrade -y \
-    && apt install -y sudo git \
+    && apt install -y sudo git screen \
     && echo 'user ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers \
     && useradd -m user \
     && apt clean
