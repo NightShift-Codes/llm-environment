@@ -26,12 +26,12 @@ jobs:
 
       - name: Get name of Dockerfile to use based on the repo tag which triggered the workflow
         id: vars
-        run: echo "dockerfile=Dockerfile.${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+        run: echo "dockerfile=docker/Dockerfile.${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./docker
+          context: ./docker/
           file: ${{ steps.vars.outputs.dockerfile }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
