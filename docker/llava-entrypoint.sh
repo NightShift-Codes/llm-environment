@@ -33,7 +33,7 @@ if [ -z "$INTERNAL_INIT_SCRIPT" ]; then
   echo hardstatus alwayslastline > "$screencfg"
   # Start script in a new screen session
   if [ -t 1 ]; then
-    INTERNAL_INIT_SCRIPT=1 screen -mq -c "$screencfg" bash -c "$0"
+    INTERNAL_INIT_SCRIPT=1 screen -mq -c "$screencfg" /bin/bash -c "$0 $@"
     # Store screen return code
     ret=$?
     # Remove temporary screen config file
@@ -46,11 +46,6 @@ fi
 
 set -Euo pipefail
 mkdir -p /tmp/log
-if [ "$#" == "1" ]; then
-    MODEL="$1"
-fi
-DEFAULT_MODEL="SurfaceData/llava-v1.6-mistral-7b-sglang"
-MODEL="${MODEL:-$DEFAULT_MODEL}"
 LOGS=/tmp/log/{controller,gradio,sglang_server,sglang_worker}.log
 rm -f /tmp/log/{controller,gradio,sglang_server,sglang_worker}.log
 touch /tmp/log/{controller,gradio,sglang_server,sglang_worker}.log
@@ -112,8 +107,7 @@ await 2 "gradio" curl -fs localhost:7860
 echo "
 Starting sglang server"
 (python -m sglang.launch_server \
-    --model-path "$MODEL" \
-    --chat-template "vicuna_v1.1" \
+    "$@" \
     --port 30000 2>&1 | stdbuf -o0 grep -v /generate) >/tmp/log/sglang_server.log &
 SGLANG_SERVER_PID=$!
 await 3 "sglang server (this may take a while on first run)" curl -fs localhost:30000/get_model_info
